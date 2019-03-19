@@ -1,0 +1,129 @@
+<div class="container">
+    <!-- App Header -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#"><i class="fa fa-github" aria-hidden="true"></i> GitHub</a>
+        <div class="" id="navbarSupportedContent">
+            <div class="search-results">
+                <input id="typeahead-template" type="search" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" [resultTemplate]="resultTemplate"
+                [inputFormatter]="formatter" placeholder="Search Users" (selectItem)="selectedItem($event)"/>
+                <ng-template #resultTemplate let-r="result" let-t="term">
+                    <img [src]="r['profileImg']" class="userImg">
+                    <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                </ng-template>
+            </div>
+        </div>
+    </nav>
+    <!-- User profile -->
+    <div *ngIf="userData">
+        <div class="userProfileContainer">
+            <!-- Top profile container -->
+            <div class="row">
+                <div class="col-sm-3 text-center">
+                    <div class="profileImg">
+                        <img [src]="userData.avatar_url" class="img-fluid rounded-circle" [alt]="userData.name" [title]="userData.name"/>
+                    </div>
+                </div>
+                <div class="col-sm-9">
+                    <div class="profileDetails">
+                        <h4>
+                            {{userData.name}}
+                        </h4>
+                        <small><cite [title]="userData.location" *ngIf="userData.location">{{userData.location}} <i class="fa fa-map-marker">
+                        </i></cite></small>
+                        <p>
+                            <i class="fa fa-envelope-o" *ngIf="userData.email"></i> {{userData.email}}
+                            <span class="clearfix"></span>
+                            <i class="fa fa-building" *ngIf="userData.company"></i> {{userData.company}}
+                            <span class="clearfix"></span>
+                            <i class="fa fa-github" *ngIf="userData.public_gists"></i> {{userData.public_gists}} Public Gists
+                            <span class="clearfix"></span>
+                            <i class="fa fa-github" *ngIf="userData.public_repos"></i> {{userData.public_repos}} Public Repository
+                            <span class="clearfix"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+    			<div class="col-md-12">
+    				<nav>
+    					<div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+    						<a class="nav-item nav-link" [ngClass]="(tabs['1'])?'active':''" id="nav-home-tab" data-toggle="tab" href="javascript:;" role="tab" (click)="switchTab(1)">Followers {{userData.followers}}</a>
+    						<a class="nav-item nav-link" [ngClass]="(tabs['2'])?'active':''" id="nav-profile-tab" data-toggle="tab" href="javascript:;" role="tab" (click)="switchTab(2)">Repos {{userData.public_repos}}</a>
+    						<a class="nav-item nav-link" [ngClass]="(tabs['3'])?'active':''" id="nav-about-tab" data-toggle="tab" href="javascript:;" role="tab" (click)="switchTab(3)">Contributions </a>
+    					</div>
+    				</nav>
+    				<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+    					<div class="tab-pane fade" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" [ngClass]="(tabs['1'])?'show active':''">
+                            <div class="row">
+                                <div class="col-md-6" *ngFor="let data of userData.followersList; let i = index">
+                                    <div class="followersList">
+                                        <div class="row">
+                                            <div class="col-sm-4 text-center">
+                                                <div class="profileImg">
+                                                    <img [src]="data.avatar_url" class="img-fluid rounded-circle" [alt]="data.name" [title]="data.name"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <div class="profileDetails">
+                                                    <h4 class="followersName">
+                                                        {{data.login}}
+                                                    </h4>
+                                                    <small><a [href]="data.html_url" target="new" [title]="data.location">View profile <i class="fa fa-external-link">
+                                                    </i></a></small>
+                                                    <p>
+                                                        <i class="fa fa-envelope-o" *ngIf="data.email"></i> {{data.email}}
+                                                        <span class="clearfix"></span>
+                                                        <i class="fa fa-building" *ngIf="data.company"></i> {{data.company}}
+                                                        <span class="clearfix"></span>
+                                                        <i class="fa fa-github" *ngIf="data.public_gists"></i> {{data.public_gists}} Public Gists
+                                                        <span class="clearfix"></span>
+                                                        <i class="fa fa-github" *ngIf="data.public_repos"></i> {{data.public_repos}} Public Repository
+                                                        <span class="clearfix"></span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+    					</div>
+    					<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" [ngClass]="(tabs['2'])?'show active':''">
+                            <div class="row">
+                                <div class="col-md-6" *ngFor="let repoData of userData.repoList; let i = index">
+                                    <div class="followersList">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="profileDetails">
+                                                    <h4 class="followersName">
+                                                        {{repoData.name}}
+                                                    </h4>
+                                                    <p>{{repoData.description}}</p>
+                                                    <p>
+                                                        <i class="fa fa-language" *ngIf="repoData.language"></i> {{repoData.language}}
+                                                        <i class="fa fa-code-fork" ></i> {{repoData.forks}}
+                                                        <span class="clearfix"></span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+    					</div>
+    					<div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab" [ngClass]="(tabs['3'])?'show active':''">
+
+    					</div>
+    				</div>
+
+    			</div>
+    		</div>
+        </div>
+    </div>
+    <div *ngIf="!userData">
+        <div class="userMessage text-center">
+            <i class="fa fa-exclamation-triangle fa-2x messageWarning" aria-hidden="true"></i>
+            <h4> No data to display </h4>
+            <p> Search for the user on the search box </p>
+        </div>
+    </div>
+</div>
